@@ -8,6 +8,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Scanner;
+
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
 import com.google.gson.Gson;
 
 
@@ -23,12 +31,32 @@ public class Api {
 
         Scanner sc = new Scanner(System.in);
         int option = 0;
-        System.out.println("Please Enter UserName:");
-        String user = sc.next();
-        System.out.println("Please Enter Password:");
-        String pass = sc.next();
-        sc.nextLine(); // consume newline character
+        String username = "";
+        String sPassword = "";
+        char[] cPassword;
 
+
+        JTextField usernameField = new JTextField(50);
+        JPasswordField passwordField = new JPasswordField(20);
+
+        JPanel loginPanel = new JPanel();
+        loginPanel.add(new JLabel("Username:"));
+        loginPanel.add(usernameField);
+        loginPanel.add(Box.createHorizontalStrut(15)); 
+        loginPanel.add(new JLabel("Password:"));
+        loginPanel.add(passwordField);
+
+          int result = JOptionPane.showConfirmDialog(null, loginPanel, 
+                   "Please Enter Username and Password", JOptionPane.OK_CANCEL_OPTION);
+
+          if (result == JOptionPane.OK_OPTION) {
+             username = usernameField.getText();
+             cPassword = passwordField.getPassword();
+
+             //password = passwordField.getText();
+
+             for(int c = 0; c < cPassword.length; c++)
+                 sPassword = sPassword + cPassword[c];
         while (option != 5) {
             System.out.println("Please choose a country:");
             System.out.println("1 - United States");
@@ -91,7 +119,7 @@ public class Api {
                     json.append(output);
                 }
 
-                Connection conn = DriverManager.getConnection(url, user, pass);
+                Connection conn = DriverManager.getConnection(url, username, sPassword);
                 Gson gson = new Gson();
                 MyObject[] universities = gson.fromJson(json.toString(), MyObject[].class);
                 String insertSql = "INSERT INTO universities (name, domain, website, country, alpha_code) VALUES (?, ?, ?, ?, ?)";
@@ -121,5 +149,5 @@ public class Api {
             }
             }
     }
-}
+}}
 
